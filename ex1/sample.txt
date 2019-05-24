@@ -1,0 +1,10 @@
+Identifier Type Drug
+GSM3110847 control mock
+GSM3110848 control mock
+GSM3110849 UHRF1 mock
+GSM3110850 UHRF1 mock
+GSM3110851 control Trichostatin_A
+GSM3110852 control Trichostatin_A
+GSM3110853 UHRF1 Trichostatin_A
+GSM3110854 UHRF1 Trichostatin_A
+GSM3118962 none 5-aza-2-deoxycytidine

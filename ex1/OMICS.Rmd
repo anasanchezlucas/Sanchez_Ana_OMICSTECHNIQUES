@@ -1,0 +1,199 @@
+---
+title: "OMICS"
+author: "Ana"
+date: "22/5/2019"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+targets <- read.csv('sample.txt', sep = '')
+targets
+```
+
+```{r}
+expressions <- read.delim('GSE113664_series_matrix.txt' , header = TRUE, row.names = 1)
+expressions
+```
+
+```{r}
+dim(expressions)
+summary(expressions)
+
+```
+
+```{r}
+boxplot(expressions, col = c(5,5,7,7,8,8,6,6,9))
+
+```
+
+
+```{r}
+## ----simulateData--------------------------------------------------------
+expressionValues <- data.matrix(expressions)
+head(expressionValues)
+
+
+```
+
+
+
+```{r}
+## ----simulateGeneInfo----------------------------------------------------
+myGenes<-rownames(expressions)
+myGenes
+```
+
+
+
+```{r}
+## ----simulateInfo--------------------------------------------------------
+myInfo=list(myName="Ana Sanchez", myLab="Bioinformatics Lab", 
+          myContact="ana.sanchez@alum.esci.upf.edu", myTitle="Practical Exercise on ExpressionSets")
+show(myInfo)
+```
+```{r}
+## ------------------------------------------------------------------------
+variab <- apply(expressionValues, 1, sd)
+orderedGenes <- myGenes[order(variab, decreasing=TRUE)]
+head(variab[order(variab, decreasing=TRUE)])
+head(orderedGenes)
+
+```
+
+```{r}
+## ----subsetExpressions---------------------------------------------------
+newExpress<- expressionValues[,-9]
+newTargets <- targets[-9,]
+wrongNewTargets <- targets [-10,]
+newExpress
+newTargets
+wrongNewTargets
+```
+
+```{r}
+
+require("Biobase")
+
+```
+
+```{r}
+## ----creaExpressionSet1--------------------------------------------------
+myEset <- ExpressionSet(expressionValues)
+class(myEset)
+show(myEset)
+
+```
+
+```{r}
+
+## ----AnnotatedDataFrame2-------------------------------------------------
+columnDesc <-  data.frame(labelDescription= c("Identifier", "Type", "Drug"))
+myAnnotDF <- new("AnnotatedDataFrame", data=targets, varMetadata= columnDesc)
+show(myAnnotDF)
+
+```
+
+```{r}
+## ------------------------------------------------------------------------
+phenoData(myEset) <- myAnnotDF 
+phenoData(myEset)
+```
+
+```{r}
+
+## ------------------------------------------------------------------------
+rownames(pData(myAnnotDF))<-(pData(myAnnotDF)$Identifier)
+pData(myAnnotDF)==colnames(expressionValues)
+myEset <- ExpressionSet(assayData=expressionValues, phenoData=myAnnotDF)
+show(myEset)
+
+```
+
+```{r}
+
+## ------------------------------------------------------------------------
+myEset <- ExpressionSet(assayData=expressionValues, 
+                        phenoData=myAnnotDF, 
+                        featureNames =myGenes)
+# show(myEset)
+
+```
+
+```{r}
+## ----label=MIAME---------------------------------------------------------
+myDesc <- new("MIAME", name= myInfo[["myName"]],
+            lab= myInfo[["myLab"]],
+            contact= myInfo[["myContact"]] ,
+            title=myInfo[["myTitle"]])
+print(myDesc)
+
+```
+
+```{r}
+## ------------------------------------------------------------------------
+myEset <- ExpressionSet(assayData=expressionValues, 
+                        phenoData=myAnnotDF,
+                        fetureNames =myGenes,
+                        experimentData = myDesc)
+# show(myEset)
+```
+
+
+```{r}
+## ----usingExpressionSets-------------------------------------------------
+dim(exprs(myEset))
+class(phenoData(myEset))
+class(pData(phenoData(myEset)))
+head(pData(phenoData(myEset)))
+head(pData(myEset))
+
+```
+
+
+```{r}
+
+## ------------------------------------------------------------------------
+smallEset <- myEset[1:15,c(1:3,6:8)]
+dim(exprs(smallEset))
+dim(pData(smallEset))
+head(pData(smallEset))
+all(colnames(exprs(smallEset))==rownames(pData(smallEset)))
+
+
+```
+
+```{r}
+
+## ------------------------------------------------------------------------
+youngEset <- myEset[,pData(myEset)$age<30]
+dim(exprs(youngEset))
+head(pData(youngEset))
+```
+
+```{r}
+## ------------------------------------------------------------------------
+if (!require(GEOquery)) {
+  BiocManager::install("GEOquery")
+}
+require(GEOquery)
+gse <- getGEO("GSE27174")
+class(gse)
+names(gse)
+gse[[1]]
+esetFromGEO <- gse[[1]]
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
