@@ -2,16 +2,29 @@
 title: "OMICS"
 author: "Ana"
 date: "22/5/2019"
-output: html_document
-editor_options: 
+output:
+  html_document: default
+  pdf_document: default
+editor_options:
   chunk_output_type: console
 ---
+##Summary
+UHRF1 is a major regulator of epigenetic mechanism and is overexpressed in various human malignancies. In this study, we examined the involvement of UHRF1 in aberrant DNA methylation in colorectal cancer (CRC). In CRC cells, transient UHRF1 knockdown rapidly induced DNA demethylation across entire genomic regions, including CpG islands, gene bodies and repetitive elements. Nonetheless, UHRF1 depletion only minimally reversed CpG island hypermethylation-associated gene silencing. However, the combination of UHRF1 depletion and histone deacetylase (HDAC) inhibition synergistically reactivated the silenced genes and strongly suppressed CRC cell proliferation. Our results suggest that (i) maintenance of DNA methylation in CRC cells is highly dependent on UHRF1; (ii) UHRF1 depletion rapidly induces DNA demethylation, though it is insufficient to fully reactivate the silenced genes; and (iii) dual targeting of UHRF1 and HDAC may be an effective new therapeutic strategy.
+
+##Overall design	
+RKO cells were transfected with a control siRNA (Thermo Fisher Scientific) or siRNAs targeting UHRF1 (Thermo Fisher Scientific) using using Lipofectamine RNAiMAX (Thermo Fisher Scientific) and incubated for 72 h. Cells were then treated with mock (ethanol) or 300 nM Trichostatin A (TSA) for additional 24 h. RKO cells were also treated with AZA.
+
+##Contributor(s)	
+Suzuki H
+
+##Citation(s)	
+Niinuma T, Kitajima H, Kai M, Yamamoto E et al. UHRF1 depletion and HDAC inhibition reactivate epigenetically silenced genes in colorectal cancer cells. Clin Epigenetics 2019 May 7;11(1):70. PMID: 31064417
 
 ```{r}
 targets <- read.csv('sample.txt', sep = '')
 targets
 ```
-
+Here, we are reading our samples file
 ```{r}
 expressions <- read.delim('GSE113664_series_matrix.txt' , header = TRUE, row.names = 1)
 expressions
@@ -27,7 +40,13 @@ summary(expressions)
 boxplot(expressions, col = c(5,5,7,7,8,8,6,6,9))
 
 ```
+This output is a boxplot of our data. We can't see a clear box because the data is dispersed and not localized. There's not a lot of  difference between all the expressions, they have some outliers. Bu, despite that we can conclude that they are regular.
 
+```{r}
+boxplot(log(expressions), col = c(5,5,7,7,8,8,6,6,9))
+
+```
+When we normalize the data, we get the boxes. They are very similar in all the groups despite the last one that seems to have higher values than the others. It's not a strange fact because if we look to our data, it seems that GSM3118962(last expression) is the one that is more different than the others.
 
 ```{r}
 ## ----simulateData--------------------------------------------------------
@@ -36,7 +55,7 @@ head(expressionValues)
 
 
 ```
-
+Here, we are converting our data frame into a matrix
 
 
 ```{r}
@@ -44,7 +63,7 @@ head(expressionValues)
 myGenes<-rownames(expressions)
 myGenes
 ```
-
+We define the identifiers.
 
 
 ```{r}
@@ -53,6 +72,8 @@ myInfo=list(myName="Ana Sanchez", myLab="Bioinformatics Lab",
           myContact="ana.sanchez@alum.esci.upf.edu", myTitle="Practical Exercise on ExpressionSets")
 show(myInfo)
 ```
+
+
 ```{r}
 ## ------------------------------------------------------------------------
 variab <- apply(expressionValues, 1, sd)
@@ -73,9 +94,7 @@ wrongNewTargets
 ```
 
 ```{r}
-
 require("Biobase")
-
 ```
 
 ```{r}
@@ -85,6 +104,7 @@ class(myEset)
 show(myEset)
 
 ```
+We're using ExpressionSet in order to initiate an object or a class from our dataset
 
 ```{r}
 
@@ -94,12 +114,13 @@ myAnnotDF <- new("AnnotatedDataFrame", data=targets, varMetadata= columnDesc)
 show(myAnnotDF)
 
 ```
-
+By using data.frame, we are adding information to the columns.
 ```{r}
 ## ------------------------------------------------------------------------
 phenoData(myEset) <- myAnnotDF 
 phenoData(myEset)
 ```
+We are storing the information in the slot phenoData.
 
 ```{r}
 
@@ -120,6 +141,7 @@ myEset <- ExpressionSet(assayData=expressionValues,
 # show(myEset)
 
 ```
+Then, we can do this store the information about our identifiers(genes) using a character vector.
 
 ```{r}
 ## ----label=MIAME---------------------------------------------------------
@@ -130,6 +152,7 @@ myDesc <- new("MIAME", name= myInfo[["myName"]],
 print(myDesc)
 
 ```
+Another way to store information about the information is by using "MIAME". Not necessary for the data analysis.
 
 ```{r}
 ## ------------------------------------------------------------------------
@@ -139,8 +162,7 @@ myEset <- ExpressionSet(assayData=expressionValues,
                         experimentData = myDesc)
 # show(myEset)
 ```
-
-
+Then we add another object to our Expression set.
 ```{r}
 ## ----usingExpressionSets-------------------------------------------------
 dim(exprs(myEset))
@@ -150,7 +172,7 @@ head(pData(phenoData(myEset)))
 head(pData(myEset))
 
 ```
-
+This is used for accessing slot values.
 
 ```{r}
 
@@ -160,17 +182,12 @@ dim(exprs(smallEset))
 dim(pData(smallEset))
 head(pData(smallEset))
 all(colnames(exprs(smallEset))==rownames(pData(smallEset)))
-
+smallEset
 
 ```
+This is done for subsetting the ExpressionSet.
+For example, I have made reduced dataset that contains 6 samples.
 
-```{r}
-
-## ------------------------------------------------------------------------
-youngEset <- myEset[,pData(myEset)$age<30]
-dim(exprs(youngEset))
-head(pData(youngEset))
-```
 
 ```{r}
 ## ------------------------------------------------------------------------
