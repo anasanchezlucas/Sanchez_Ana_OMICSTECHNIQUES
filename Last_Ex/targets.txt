@@ -1,0 +1,10 @@
+Identifier,Group,Color,ShortName,Type,Drug
+GSM3110847,RKO_siCONT_r,Red,G47,control,mock
+GSM3110848,RKO_siCONT_r,Red,G48,control,mock
+GSM3110849,RKO_siUHRF1,Blue,G49,UHRF1,mock
+GSM3110850,RKO_siUHRF1,Blue,G50,UHRF1,mock
+GSM3110851,RKO_siCONT_pr,Green,G51,control,Trichostatin_A
+GSM3110852,RKO_siCONT_pr,Green,G52,control,Trichostatin_A
+GSM3110853,RKO_siCONT_pt,Yellow,G53,UHRF1,Trichostatin_A
+GSM3110854,RKO_siCONT_pt,Yellow,G54,UHRF1,Trichostatin_A
+GSM3118962,RKO_w_AZA,Black,G62,None,5-aza-2-deoxycytidine
